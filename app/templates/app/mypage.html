@@ -34,17 +34,28 @@
             <tbody>
                 {% for booking_hour, booking_date in calendar.items %}
                 <tr>
-                    <td scope="row">{{ booking_hour }}:00</td>
-                    {% for datetime, book in booking_date.items %}
-                    <td>
-                        {% if book == "" %}
-                            出勤
-                        {% else %}
-                            <p class="mb-0 font-weight-bold text-success">{{ book }}様</p>
-                        {% endif %}
-                    </td>
-                    {% endfor %}
-                </tr>
+									<td scope="row">{{ booking_hour }}:00</td>
+									{% for datetime, book in booking_date.items %}
+									<td>
+											{% if book == "" %}
+													<form method="POST" action="{% url 'holiday' datetime.year datetime.month datetime.day booking_hour %}">
+															{% csrf_token %}
+															<button class="btn btn-light" type="submit">出勤</button>
+													</form>
+											{% else %}
+													{% if book == None %}
+															<p class="mb-0">休み</p>
+													{% else %}
+															<p class="mb-0 font-weight-bold text-success">{{ book }}様</p>
+													{% endif %}
+													<form method="POST" action="{% url 'delete' datetime.year datetime.month datetime.day booking_hour %}">
+															{% csrf_token %}
+															<button class="btn btn-danger" type="submit">取消</button>
+													</form>
+											{% endif %}
+									</td>
+									{% endfor %}
+							</tr>
                 {% endfor %}
             </tbody>
         </table>
